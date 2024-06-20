@@ -21,6 +21,7 @@ package freebsd
 
 import (
 	"encoding/json"
+	"github.com/elastic/go-sysinfo/types"
 	"testing"
 
 	"github.com/elastic/go-sysinfo/internal/registry"
@@ -50,4 +51,21 @@ func TestHost(t *testing.T) {
 		data, _ := json.MarshalIndent(mem, "", "  ")
 		t.Log(string(data))
 	})
+}
+
+func TestHostLoadAverage(t *testing.T) {
+	host, err := newFreeBSDSystem().Host()
+	if err != nil {
+		t.Fatal(err)
+	}
+	s, err := host.(types.LoadAverage).LoadAverage()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := json.Marshal(s)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(data))
 }

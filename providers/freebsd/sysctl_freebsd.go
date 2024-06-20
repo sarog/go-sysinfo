@@ -246,3 +246,19 @@ func wirePageCount(r *reader) uint64 {
 	}
 	return uint64(v)
 }
+
+type loadAvg struct {
+	load  [3]uint32
+	scale int
+}
+
+func getLoadAverage() (*loadAvg, error) {
+	const mib = "vm.loadavg"
+
+	data, err := unix.SysctlRaw(mib)
+	if err != nil {
+		return nil, err
+	}
+	load := *(*loadAvg)(unsafe.Pointer((&data[0])))
+	return &load, nil
+}
